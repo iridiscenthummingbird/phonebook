@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:phonebook/di.dart';
+import 'package:phonebook/screens/main_screen/main_screen.dart';
 import 'package:phonebook/screens/splash_screen/splash_screen.dart';
 
 class MyApp extends StatelessWidget {
@@ -6,9 +8,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Phonebook',
-      home: SplashScreen(),
+    return DI(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Phonebook',
+        theme: ThemeData.dark(),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const SplashScreen(),
+          '/main': (context) => const MainScreen(),
+        },
+      ),
     );
   }
 }

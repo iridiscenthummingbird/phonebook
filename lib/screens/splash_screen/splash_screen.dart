@@ -9,10 +9,24 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
+  void initState() {
+    Future.delayed(const Duration(seconds: 5), () {
+      Navigator.pushNamed(context, '/main');
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: const Scaffold(
+        body: Center(
+          child: Text(
+            "Phonebook",
+            style: TextStyle(fontSize: 32),
+          ),
+        ),
       ),
     );
   }
