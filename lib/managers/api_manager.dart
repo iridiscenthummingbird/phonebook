@@ -27,6 +27,10 @@ class ApiManager extends IApiManager {
   final Map<ApiRequest, int> _networkFailedRequestAttempts =
       <ApiRequest, int>{};
 
+  Map<String, String> globalHeaders = <String, String>{
+    'Content-Type': 'application/json'
+  };
+
   @override
   Future<dynamic> callApiRequest(ApiRequest request) async {
     try {
@@ -45,37 +49,47 @@ class ApiManager extends IApiManager {
 
   Future<dynamic> _performRequest(ApiRequest request) async {
     final Uri url = Uri.parse(baseUrl + request.urlSuffix);
+    final Map<String, String> headers = Map<String, String>.of(globalHeaders);
 
     Future<Response>? responseFuture;
     switch (request.runtimeType) {
       case GetRequest:
-        responseFuture = http.get(url);
+        responseFuture = http.get(
+          url,
+          headers: headers,
+        );
         break;
 
       case PostRequest:
-        responseFuture = http.post(url,
-            body: request.payload.isNotEmpty
-                ? json.encode(request.payload)
-                : null);
+        responseFuture = http.post(
+          url,
+          body:
+              request.payload.isNotEmpty ? json.encode(request.payload) : null,
+          headers: headers,
+        );
         break;
 
       case PutRequest:
-        responseFuture = http.put(url,
-            body: request.payload.isNotEmpty
-                ? json.encode(request.payload)
-                : null);
+        responseFuture = http.put(
+          url,
+          body:
+              request.payload.isNotEmpty ? json.encode(request.payload) : null,
+          headers: headers,
+        );
         break;
 
       case PatchRequest:
         responseFuture = http.patch(
           url,
           body: json.encode(request.payload),
+          headers: headers,
         );
         break;
 
       case DeleteRequest:
         responseFuture = http.delete(
           url,
+          headers: headers,
         );
         break;
       default:
