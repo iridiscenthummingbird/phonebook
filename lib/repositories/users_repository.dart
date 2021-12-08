@@ -20,6 +20,8 @@ abstract class IUsersRepository {
 
   Future<bool> addUser(String name);
   Future deleteUser(int id);
+
+  void addUsersToDB(List<User> users);
 }
 
 class UsersRepository extends IUsersRepository {
@@ -71,6 +73,12 @@ class UsersRepository extends IUsersRepository {
       print("Get users from api: " + e.toString());
     }
     return users;
+  }
+
+  @override
+  void addUsersToDB(List<User> users) {
+    dataBaseManager.deleteAllUsers();
+    dataBaseManager.addUserList(users);
   }
 
   @override

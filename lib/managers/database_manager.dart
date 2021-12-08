@@ -8,6 +8,8 @@ abstract class IDataBaseManager {
   Future addUser(User user);
   Future deleteUser(int id);
   Stream<List<User>> watchUsers();
+  Future deleteAllUsers();
+  Future addUserList(List<User> users);
 }
 
 class DataBaseManager extends IDataBaseManager {
@@ -26,5 +28,15 @@ class DataBaseManager extends IDataBaseManager {
   @override
   Stream<List<User>> watchUsers() {
     return database.userDao.watchUsers();
+  }
+
+  @override
+  Future addUserList(List<User> users) {
+    return database.userDao.saveUsers(users);
+  }
+
+  @override
+  Future deleteAllUsers() {
+    return database.userDao.deleteAllUsers();
   }
 }

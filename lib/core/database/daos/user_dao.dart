@@ -29,7 +29,23 @@ class UserDao extends DatabaseAccessor<MyDatabase> with _$UserDaoMixin {
     );
   }
 
+  Future<void> saveUsers(List<User> users) async {
+    await batch(
+      (batch) {
+        batch.insertAll(
+          userTable,
+          userListToMap(users),
+          mode: InsertMode.insertOrReplace,
+        );
+      },
+    );
+  }
+
+  Future deleteAllUsers() async {
+    return await delete(userTable).go();
+  }
+
   Future deleteUser(int id) async {
-    return (delete(userTable)..where((tbl) => tbl.id.equals(id))).go();
+    return await (delete(userTable)..where((tbl) => tbl.id.equals(id))).go();
   }
 }

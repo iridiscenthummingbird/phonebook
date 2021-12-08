@@ -10,11 +10,9 @@ class MainCubit extends Cubit<MainState> {
   MainCubit({required this.usersRepository}) : super(MainInitial());
   final IUsersRepository usersRepository;
 
-  final StreamController<List<User>> _streamController =
-      StreamController<List<User>>();
-  Stream<List<User>> get users => _streamController.stream;
+  Stream<List<User>> get users => usersRepository.getUsersFromDB();
 
   Future<void> getUsers() async {
-    _streamController.add(await usersRepository.getUsersFromApi());
+    usersRepository.addUsersToDB(await usersRepository.getUsersFromApi());
   }
 }
