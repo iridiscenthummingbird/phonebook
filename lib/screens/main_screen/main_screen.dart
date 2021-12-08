@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:phonebook/model/user.dart';
 import 'package:phonebook/repositories/users_repository.dart';
+import 'package:phonebook/screens/delails_screen/details_screen.dart';
 import 'package:phonebook/screens/main_screen/cubit/main_cubit.dart';
+import 'package:phonebook/utils/details_args.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -26,7 +28,9 @@ class _MainScreenState extends State<MainScreen> {
       onWillPop: () async => false,
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, '/addUser');
+          },
           child: const Icon(Icons.add),
         ),
         body: StreamBuilder<List<User>>(
@@ -41,15 +45,24 @@ class _MainScreenState extends State<MainScreen> {
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   User user = snapshot.data![index];
-                  return Card(
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: NetworkImage(user.avatar),
-                        onBackgroundImageError: (exception, stackTrace) {
-                          //print(exception);
-                        },
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        DetailsScreen.detailsRouteName,
+                        arguments: DetailsArgs(user: user),
+                      );
+                    },
+                    child: Card(
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(user.avatar),
+                          onBackgroundImageError: (exception, stackTrace) {
+                            //print(exception);
+                          },
+                        ),
+                        title: Text(user.name),
                       ),
-                      title: Text(user.name),
                     ),
                   );
                 },
