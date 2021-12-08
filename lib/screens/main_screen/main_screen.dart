@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:phonebook/managers/exeption/app_exceptions.dart';
 import 'package:phonebook/model/user.dart';
 import 'package:phonebook/repositories/users_repository.dart';
 import 'package:phonebook/screens/delails_screen/details_screen.dart';
@@ -53,15 +54,41 @@ class _MainScreenState extends State<MainScreen> {
                         arguments: DetailsArgs(user: user),
                       );
                     },
-                    child: Card(
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(user.avatar),
-                          onBackgroundImageError: (exception, stackTrace) {
-                            //print(exception);
-                          },
+                    child: Dismissible(
+                      key: ValueKey<int>(user.id),
+                      confirmDismiss: (direction) async {
+                        bool shouldDismiss = true;
+                        try {
+                          await _cubit.deleteUser(user.id);
+                        } on BadRequestException {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("User has been already deleted."),
+                            ),
+                          );
+                        } catch (e) {
+                          shouldDismiss = false;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("You can't delete this user."),
+                            ),
+                          );
+                        }
+                        return shouldDismiss;
+                      },
+                      background: Card(
+                        color: Colors.red.shade900,
+                      ),
+                      child: Card(
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(user.avatar),
+                            onBackgroundImageError: (exception, stackTrace) {
+                              // print(exception);
+                            },
+                          ),
+                          title: Text(user.name),
                         ),
-                        title: Text(user.name),
                       ),
                     ),
                   );

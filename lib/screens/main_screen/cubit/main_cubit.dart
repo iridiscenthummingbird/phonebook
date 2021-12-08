@@ -13,6 +13,22 @@ class MainCubit extends Cubit<MainState> {
   Stream<List<User>> get users => usersRepository.getUsersFromDB();
 
   Future<void> getUsers() async {
-    usersRepository.addUsersToDB(await usersRepository.getUsersFromApi());
+    try {
+      usersRepository.addUsersToDB(await usersRepository.getUsersFromApi());
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void deleteFromDB(int id) {
+    usersRepository.deleteUserFromDB(id);
+  }
+
+  Future<void> deleteUser(int id) async {
+    try {
+      await usersRepository.deleteUser(id);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

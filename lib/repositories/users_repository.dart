@@ -19,7 +19,8 @@ abstract class IUsersRepository {
   Stream<List<User>> getUsersFromDB();
 
   Future<bool> addUser(String name);
-  Future deleteUser(int id);
+  Future<void> deleteUser(int id);
+  void deleteUserFromDB(int id);
 
   void addUsersToDB(List<User> users);
 }
@@ -49,7 +50,7 @@ class UsersRepository extends IUsersRepository {
   }
 
   @override
-  Future deleteUser(int id) async {
+  Future<void> deleteUser(int id) async {
     try {
       final result =
           await apiManager.callApiRequest(DeleteRequest('/users/$id'));
@@ -57,7 +58,7 @@ class UsersRepository extends IUsersRepository {
       User deletedUser = User.fromMap(reader.asObject());
       dataBaseManager.deleteUser(deletedUser.id);
     } catch (e) {
-      print(e);
+      rethrow;
     }
   }
 
@@ -71,6 +72,7 @@ class UsersRepository extends IUsersRepository {
       users = reader.asListOfObjects().map((e) => User.fromMap(e)).toList();
     } catch (e) {
       print("Get users from api: " + e.toString());
+      rethrow;
     }
     return users;
   }
@@ -84,5 +86,10 @@ class UsersRepository extends IUsersRepository {
   @override
   Stream<List<User>> getUsersFromDB() {
     return dataBaseManager.watchUsers();
+  }
+
+  @override
+  void deleteUserFromDB(int id) {
+    dataBaseManager.deleteUser(id);
   }
 }
