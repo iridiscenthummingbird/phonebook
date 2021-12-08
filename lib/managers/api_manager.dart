@@ -23,7 +23,7 @@ abstract class IApiManager {
 }
 
 class ApiManager extends IApiManager {
-  String baseUrl = 'https://jsonplaceholder.typicode.com/';
+  String baseUrl = 'https://61ae0f52a7c7f3001786f5b7.mockapi.io/flutter';
   final Map<ApiRequest, int> _networkFailedRequestAttempts =
       <ApiRequest, int>{};
 

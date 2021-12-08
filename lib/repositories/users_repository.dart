@@ -60,12 +60,12 @@ class UsersRepository extends IUsersRepository {
   Future<List<User>> getUsersFromApi() async {
     List<User> users = [];
     try {
-      final result = apiManager.callApiRequest(GetRequest('/users'));
+      final result = await apiManager.callApiRequest(GetRequest('/users'));
       JsonReader reader = JsonReader(result);
 
       users = reader.asListOfObjects().map((e) => User.fromMap(e)).toList();
     } catch (e) {
-      print(e);
+      print("Get users from api: " + e.toString());
     }
     return users;
   }

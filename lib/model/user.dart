@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:phonebook/utils/json_reader.dart';
+
 class User {
   final int id;
   final String avatar;
@@ -38,7 +40,7 @@ class User {
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-      id: map['id'],
+      id: JsonReader(map['id']).asInt(),
       avatar: map['avatar'],
       name: map['name'],
       createdAt: DateTime.parse(map['createdAt']),
