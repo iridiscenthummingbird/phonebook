@@ -28,74 +28,82 @@ class _MainScreenState extends State<MainScreen> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
+        appBar: AppBar(
+          leading: Container(),
+          title: const Text("Phonebook"),
+          centerTitle: true,
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.pushNamed(context, '/addUser');
           },
           child: const Icon(Icons.add),
         ),
-        body: StreamBuilder<List<User>>(
-          stream: _cubit.users,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else {
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  User user = snapshot.data![index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        DetailsScreen.detailsRouteName,
-                        arguments: DetailsArgs(user: user),
-                      );
-                    },
-                    child: Dismissible(
-                      key: ValueKey<int>(user.id),
-                      confirmDismiss: (direction) async {
-                        bool shouldDismiss = true;
-                        try {
-                          await _cubit.deleteUser(user.id);
-                        } on BadRequestException {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("User has been already deleted."),
-                            ),
-                          );
-                        } catch (e) {
-                          shouldDismiss = false;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("You can't delete this user."),
-                            ),
-                          );
-                        }
-                        return shouldDismiss;
+        body: RefreshIndicator(
+          onRefresh: () => _cubit.getUsers(),
+          child: StreamBuilder<List<User>>(
+            stream: _cubit.users,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    User user = snapshot.data![index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          DetailsScreen.detailsRouteName,
+                          arguments: DetailsArgs(user: user),
+                        );
                       },
-                      background: Card(
-                        color: Colors.red.shade900,
-                      ),
-                      child: Card(
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(user.avatar),
-                            onBackgroundImageError: (exception, stackTrace) {
-                              // print(exception);
-                            },
+                      child: Dismissible(
+                        key: ValueKey<int>(user.id),
+                        confirmDismiss: (direction) async {
+                          bool shouldDismiss = true;
+                          try {
+                            await _cubit.deleteUser(user.id);
+                          } on BadRequestException {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("User has been already deleted."),
+                              ),
+                            );
+                          } catch (e) {
+                            shouldDismiss = false;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("You can't delete this user."),
+                              ),
+                            );
+                          }
+                          return shouldDismiss;
+                        },
+                        background: Card(
+                          color: Colors.red.shade900,
+                        ),
+                        child: Card(
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(user.avatar),
+                              onBackgroundImageError: (exception, stackTrace) {
+                                // print(exception);
+                              },
+                            ),
+                            title: Text(user.name),
                           ),
-                          title: Text(user.name),
                         ),
                       ),
-                    ),
-                  );
-                },
-              );
-            }
-          },
+                    );
+                  },
+                );
+              }
+            },
+          ),
         ),
       ),
     );

@@ -48,17 +48,18 @@ class _AddUserScreenState extends State<AddUserScreen> {
             TextButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  if (await _cubit.addUser(_nameController.text)) {
+                  try {
+                    await _cubit.addUser(_nameController.text);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text("Success!"),
+                        content: Text("User has been added successfully."),
                       ),
                     );
                     Navigator.pop(context);
-                  } else {
+                  } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text("Error!"),
+                        content: Text("You can't add user."),
                       ),
                     );
                   }

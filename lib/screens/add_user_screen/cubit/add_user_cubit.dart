@@ -11,7 +11,11 @@ class AddUserCubit extends Cubit<AddUserState> {
   }) : super(AddUserInitial());
   final IUsersRepository usersRepository;
 
-  Future<bool> addUser(String name) async {
-    return usersRepository.addUser(name);
+  Future<void> addUser(String name) async {
+    try {
+      await usersRepository.addUser(name);
+    } catch (e) {
+      rethrow;
+    }
   }
 }
